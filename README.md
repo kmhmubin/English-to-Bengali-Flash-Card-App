@@ -7,6 +7,10 @@ in English.
 * Random English Word
 * Show Bengali word meaning of that English word
 
+### Word list repo
+Please contribute to this word list and help to grow. 😊
+
+[word list repo](https://github.com/kmhmubin/frequency-words-in-english-to-bangla-list)
 
 ### App Demo
 ![app demo](https://github.com/kmhmubin/Flash-Card/blob/main/word-card-demo.gif)
