@@ -1,3 +1,5 @@
+import random
+import pandas
 from tkinter import *
 
 # ------------------------- CONSTANT ---------------------------------- #
@@ -5,14 +7,25 @@ BLACK = "#2C333D"
 YELLOW = "#FCD836"
 WHITE = "#FFFFFF"
 GRAY_WHITE = "#F4F4F4"
-CARD_TITLE = "Bahnschrift"
-CARD_WORD = "Calibri"
+BAHNSCHRIFT = "Bahnschrift"
+CALIBRI = "Calibri"
+
+# -------------------------- WORD DICT ------------------------------- #
+data = pandas.read_csv("data/Bangla_word_list.csv")
+# creating dictionary using pandas
+learning = data.to_dict(orient="records")
 
 
 # -------------------------- NEXT CARD ------------------------------- #
 
-def next_card(args):
-    pass
+
+def next_card():
+    """Return next value randomly from the dictionary"""
+    current_card = random.choice(learning)
+    # replace the title text in the UI
+    canvas.itemconfig(card_title, text="English")
+    # replace the word text in the UI
+    canvas.itemconfig(card_word, text=current_card["English"])
 
 
 # --------------------------- UI SETUP -------------------------------- #
@@ -42,10 +55,10 @@ front_card_image = PhotoImage(file="images/card_front.png")
 canvas.create_image(400, 263, image=front_card_image)
 
 # Canvas card title
-canvas.create_text(400, 150, text="Title", font=(CARD_TITLE, 40, "italic"))
+card_title = canvas.create_text(400, 150, text="Title", font=(BAHNSCHRIFT, 40, "italic"))
 
 # canvas card word
-canvas.create_text(400, 263, text="Word", font=(CARD_WORD, 60, "bold"))
+card_word = canvas.create_text(400, 263, text="Word", font=(CALIBRI, 60, "bold"))
 
 # canvas config
 canvas.config(bg=GRAY_WHITE, highlightthicknes=0)
@@ -70,10 +83,13 @@ cross_button.grid(row=1, column=0)
 check_icon = PhotoImage(file="images/checked.png")
 
 # assign icon to the button without border or background thickness
-cross_button = Button(image=check_icon, highlightthicknes=0, borderwidth=0)
+cross_button = Button(image=check_icon, highlightthicknes=0, borderwidth=0, command=next_card)
 
 # check button grid
 cross_button.grid(row=1, column=1)
+
+# calling the next card function
+next_card()
 
 # run the window
 window.mainloop()
