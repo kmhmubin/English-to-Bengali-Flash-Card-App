@@ -15,17 +15,40 @@ data = pandas.read_csv("data/Bangla_word_list.csv")
 # creating dictionary using pandas
 learning = data.to_dict(orient="records")
 
+# default card is empty
+current_card = {}
+
 
 # -------------------------- NEXT CARD ------------------------------- #
 
 
 def next_card():
     """Return next value randomly from the dictionary"""
+    # global current cart
+    global current_card, flip_timer
+    # cancel the timer
+    window.after_cancel(flip_timer)
+    # randomly choose word from the dictionary
     current_card = random.choice(learning)
     # replace the title text in the UI
-    canvas.itemconfig(card_title, text="English")
+    canvas.itemconfig(card_title, text="English", fill=BLACK)
     # replace the word text in the UI
-    canvas.itemconfig(card_word, text=current_card["English"])
+    canvas.itemconfig(card_word, text=current_card["English"], fill=BLACK)
+    # change the background images if button pressed
+    canvas.itemconfig(card_background, image=front_card_image)
+    # flip timer
+    flip_timer = window.after(3000, func=flip_card)
+
+
+# ------------------------- FLIP CARD -------------------------------- #
+
+def flip_card():
+    """Flip the card after 3 seconds """
+    canvas.itemconfig(card_title, text="Bangla", fill=WHITE)
+    # show the equivalent meaning of the current word
+    canvas.itemconfig(card_word, text=current_card["Bangla"], fill=WHITE)
+    # changing the background images
+    canvas.itemconfig(card_background, image=back_card_image)
 
 
 # --------------------------- UI SETUP -------------------------------- #
@@ -43,6 +66,9 @@ window.config(padx=50, pady=50, bg=GRAY_WHITE)
 # add custom favicon
 window.iconbitmap(r'images/favicon.ico')
 
+# flip the card after 3 seconds
+flip_timer = window.after(3000, func=flip_card)
+
 # TODO: Creating canvas
 
 # creating a canvas
@@ -51,11 +77,14 @@ canvas = Canvas(width=800, height=526)
 # front card image
 front_card_image = PhotoImage(file="images/card_front.png")
 
+# back card image
+back_card_image = PhotoImage(file="images/card_back.png")
+
 # assigning the position for front card
-canvas.create_image(400, 263, image=front_card_image)
+card_background = canvas.create_image(400, 263, image=front_card_image)
 
 # Canvas card title
-card_title = canvas.create_text(400, 150, text="Title", font=(BAHNSCHRIFT, 40, "italic"))
+card_title = canvas.create_text(400, 150, text="Title", font=(BAHNSCHRIFT, 40, "normal"))
 
 # canvas card word
 card_word = canvas.create_text(400, 263, text="Word", font=(CALIBRI, 60, "bold"))
