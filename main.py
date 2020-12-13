@@ -11,16 +11,26 @@ BAHNSCHRIFT = "Bahnschrift"
 CALIBRI = "Calibri"
 
 # -------------------------- WORD DICT ------------------------------- #
-data = pandas.read_csv("data/Bangla_word_list.csv")
-# creating dictionary using pandas
-learning = data.to_dict(orient="records")
-
 # default card is empty
 current_card = {}
 
+# know word dictionary is empty
+known_words = {}
+
+# reading the data from know data
+try:
+    know_data = pandas.read_csv("data/know_word.csv")
+except FileNotFoundError:
+    # if know data not found then go to original data
+    original_data = pandas.read_csv("data/Bangla_word_list.csv")
+    learning = original_data.to_dict(orient="records")
+else:
+    # creating dictionary using pandas
+    learning = know_data.to_dict(orient="records")
+
 
 # -------------------------- NEXT CARD ------------------------------- #
-
+# TODO: when cross button pressed show the next word in english and flip the image
 
 def next_card():
     """Return next value randomly from the dictionary"""
@@ -41,7 +51,7 @@ def next_card():
 
 
 # ------------------------- FLIP CARD -------------------------------- #
-
+# TODO: Flip card after 3 seconds and show the bangla value
 def flip_card():
     """Flip the card after 3 seconds """
     canvas.itemconfig(card_title, text="Bangla", fill=WHITE)
@@ -51,6 +61,20 @@ def flip_card():
     canvas.itemconfig(card_background, image=back_card_image)
 
 
+# --------------------------- KNOWN WORD ------------------------------ #
+
+# TODO: When know button pressed it save in the know dictionary
+def know_word():
+    """Save Know word into new file"""
+    learning.remove(current_card)
+    # remove data from current card
+    new_data = pandas.DataFrame(learning)
+    # create a new csv file using pandas without index
+    new_data.to_csv("data/know_word.csv", index=False)
+    # show the next word
+    next_card()
+
+
 # --------------------------- UI SETUP -------------------------------- #
 
 # TODO: Creating Program window
@@ -58,7 +82,7 @@ def flip_card():
 window = Tk()
 
 # add title to the program
-window.title("Flashy Card")
+window.title("Learn English to Bangla Vocabulary")
 
 # window size
 window.config(padx=50, pady=50, bg=GRAY_WHITE)
@@ -112,7 +136,7 @@ cross_button.grid(row=1, column=0)
 check_icon = PhotoImage(file="images/checked.png")
 
 # assign icon to the button without border or background thickness
-cross_button = Button(image=check_icon, highlightthicknes=0, borderwidth=0, command=next_card)
+cross_button = Button(image=check_icon, highlightthicknes=0, borderwidth=0, command=know_word)
 
 # check button grid
 cross_button.grid(row=1, column=1)
